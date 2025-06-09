@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>时间储蓄罐 - 管理你的时间资产</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            accent: '#8B5CF6',
+            dark: '#1E293B',
+            light: '#F8FAFC'
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .bg-gradient-custom {
+        background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-light text-dark antialiased">
+  <!-- 导航栏 -->
+  <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-sm shadow-sm">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="#" class="flex-shrink-0 flex items-center">
+            <i class="fa fa-clock-o text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-xl text-dark">时间储蓄罐</span>
+          </a>
+          <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+            <a href="#dashboard" class="border-b-2 border-primary px-1 pt-1 text-sm font-medium text-primary">仪表盘</a>
+            <a href="#report" class="border-transparent hover:border-primary px-1 pt-1 text-sm font-medium text-gray-500 hover:text-primary transition-custom">时间报告</a>
+            <a href="#bank" class="border-transparent hover:border-primary px-1 pt-1 text-sm font-medium text-gray-500 hover:text-primary transition-custom">时间银行</a>
+            <a href="#share" class="border-transparent hover:border-primary px-1 pt-1 text-sm font-medium text-gray-500 hover:text-primary transition-custom">分享</a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <button id="loginBtn" class="hidden sm:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-custom">
+            登录
+          </button>
+          <div class="ml-4 relative flex items-center sm:ml-6">
+            <button id="menuBtn" class="p-1 rounded-full text-gray-500 hover:text-primary focus:outline-none">
+              <i class="fa fa-bars text-xl"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单 -->
+    <div id="mobileMenu" class="sm:hidden hidden bg-white shadow-lg absolute w-full">
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <a href="#dashboard" class="block px-3 py-2 rounded-md text-base font-medium text-primary bg-primary/10">仪表盘</a>
+        <a href="#report" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">时间报告</a>
+        <a href="#bank" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">时间银行</a>
+        <a href="#share" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">分享</a>
+      </div>
+      <div class="pt-4 pb-3 border-t border-gray-200">
+        <div class="flex items-center px-5">
+          <button class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90 transition-custom">
+            登录
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 英雄区域 -->
+  <header class="relative pt-16 pb-20 bg-gradient-custom overflow-hidden">
+    <div class="absolute inset-0 bg-[url('https://picsum.photos/id/1048/1920/1080')] bg-cover bg-center opacity-10"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-primary/60 to-accent/60"></div>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col md:flex-row items-center justify-between">
+        <div class="w-full md:w-1/2 mb-10 md:mb-0">
+          <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-white leading-tight text-shadow">
+            管理你的时间资产
+          </h1>
+          <p class="mt-4 text-lg text-white/90 max-w-xl">
+            时间储蓄罐帮助你自动记录和分析日常节省的时间，让你更清晰地了解自己的时间使用情况，并将节省的时间转化为有意义的生活体验。
+          </p>
+          <div class="mt-8 flex flex-wrap gap-4">
+            <button class="px-6 py-3 bg-white text-primary font-semibold rounded-lg shadow-lg hover:shadow-xl transition-custom transform hover:-translate-y-1">
+              开始使用
+            </button>
+            <button class="px-6 py-3 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-custom">
+              了解更多
+            </button>
+          </div>
+        </div>
+        <div class="w-full md:w-1/2 flex justify-center">
+          <div class="relative w-full max-w-md">
+            <div class="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-2xl blur opacity-50 animate-blob"></div>
+            <div class="relative bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                  <h3 class="font-semibold text-lg text-dark">本周时间储蓄</h3>
+                  <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">+12.5h</span>
+                </div>
+                <div class="h-64">
+                  <canvas id="timeChart"></canvas>
+                </div>
+                <div class="mt-6 p-4 bg-gray-50 rounded-xl">
+                  <div class="flex items-center">
+                    <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+                      <i class="fa fa-trophy text-primary text-xl"></i>
+                    </div>
+                    <div>
+                      <p class="text-sm text-gray-500">已节省时间可兑换</p>
+                      <p class="font-semibold text-dark">2次迪士尼烟花秀🎆</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+        <path fill="#F8FAFC" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,42.7C1120,32,1280,32,1360,32L1440,32L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
+      </svg>
+    </div>
+  </header>
+
+  <main>
+    <!-- 仪表盘区域 -->
+    <section id="dashboard" class="py-16 bg-light">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark">时间仪表盘</h2>
+          <p class="mt-4 text-gray-600 max-w-2xl mx-auto">实时监控你的时间节省情况，了解你的时间去向</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-lg text-dark">本周节省时间</h3>
+              <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                <i class="fa fa-calendar text-primary"></i>
+              </div>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-4xl font-bold text-dark">12.5<span class="text-xl font-normal ml-1">小时</span></p>
+                <p class="text-sm text-green-500 flex items-center mt-1">
+                  <i class="fa fa-arrow-up mr-1"></i> 较上周增长 23%
+                </p>
+              </div>
+              <div class="w-20 h-20">
+                <canvas id="weeklyTimeChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-lg text-dark">AI优化节省</h3>
+              <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                <i class="fa fa-bolt text-secondary"></i>
+              </div>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-4xl font-bold text-dark">8.2<span class="text-xl font-normal ml-1">小时</span></p>
+                <p class="text-sm text-green-500 flex items-center mt-1">
+                  <i class="fa fa-arrow-up mr-1"></i> 占总节省 65%
+                </p>
+              </div>
+              <div class="w-20 h-20">
+                <canvas id="aiTimeChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-semibold text-lg text-dark">模板复用节省</h3>
+              <div class="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
+                <i class="fa fa-clone text-accent"></i>
+              </div>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <p class="text-4xl font-bold text-dark">4.3<span class="text-xl font-normal ml-1">小时</span></p>
+                <p class="text-sm text-green-500 flex items-center mt-1">
+                  <i class="fa fa-arrow-up mr-1"></i> 占总节省 35%
+                </p>
+              </div>
+              <div class="w-20 h-20">
+                <canvas id="templateTimeChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold text-lg text-dark">时间节省趋势</h3>
+              <div class="flex space-x-2">
+                <button class="px-3 py-1 text-xs bg-primary/10 text-primary rounded-full">周</button>
+                <button class="px-3 py-1 text-xs bg-gray-100 text-gray-500 rounded-full">月</button>
+                <button class="px-3 py-1 text-xs bg-gray-100 text-gray-500 rounded-full">年</button>
+              </div>
+            </div>
+            <div class="h-80">
+              <canvas id="trendChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold text-lg text-dark">时间使用分布</h3>
+              <button class="text-gray-400 hover:text-gray-600">
+                <i class="fa fa-ellipsis-v"></i>
+              </button>
+            </div>
+            <div class="h-80">
+              <canvas id="distributionChart"></canvas>
+            </div>
+            <div class="mt-6 space-y-3">
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-primary mr-2"></div>
+                <span class="text-sm text-gray-600">工作</span>
+                <div class="ml-auto flex items-center">
+                  <span class="text-sm font-medium text-dark">45%</span>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-secondary mr-2"></div>
+                <span class="text-sm text-gray-600">学习</span>
+                <div class="ml-auto flex items-center">
+                  <span class="text-sm font-medium text-dark">25%</span>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-accent mr-2"></div>
+                <span class="text-sm text-gray-600">娱乐</span>
+                <div class="ml-auto flex items-center">
+                  <span class="text-sm font-medium text-dark">20%</span>
+                </div>
+              </div>
+              <div class="flex items-center">
+                <div class="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
+                <span class="text-sm text-gray-600">其他</span>
+                <div class="ml-auto flex items-center">
+                  <span class="text-sm font-medium text-dark">10%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 时间报告区域 -->
+    <section id="report" class="py-16 bg-gray-50">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark">时间资产报告</h2>
+          <p class="mt-4 text-gray-600 max-w-2xl mx-auto">详细分析你的时间使用情况，生成专业的时间资产报告</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-lg text-dark">本周时间资产报告</h3>
+                <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">最新</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">生成于 2025年6月9日</p>
+              <div class="flex items-center mb-6">
+                <div class="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                  <i class="fa fa-file-text-o text-primary text-2xl"></i>
+                </div>
+                <div>
+                  <p class="font-medium text-dark">总节省时间</p>
+                  <p class="text-2xl font-bold text-dark">12.5 小时</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">AI优化</p>
+                  <p class="font-medium text-dark">8.2 小时</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">模板复用</p>
+                  <p class="font-medium text-dark">4.3 小时</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">效率提升</p>
+                  <p class="font-medium text-dark">23%</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">生活兑换</p>
+                  <p class="font-medium text-dark">2次迪士尼</p>
+                </div>
+              </div>
+              <button class="w-full py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-custom">
+                查看完整报告
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-lg text-dark">上月时间资产报告</h3>
+                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">已归档</span>
+              </div>
+              <p class="text-gray-600 text-sm mb-4">生成于 2025年5月31日</p>
+              <div class="flex items-center mb-6">
+                <div class="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                  <i class="fa fa-file-text-o text-primary text-2xl"></i>
+                </div>
+                <div>
+                  <p class="font-medium text-dark">总节省时间</p>
+                  <p class="text-2xl font-bold text-dark">35.8 小时</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">AI优化</p>
+                  <p class="font-medium text-dark">24.5 小时</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">模板复用</p>
+                  <p class="font-medium text-dark">11.3 小时</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">效率提升</p>
+                  <p class="font-medium text-dark">18%</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs text-gray-500">生活兑换</p>
+                  <p class="font-medium text-dark">7次电影</p>
+                </div>
+              </div>
+              <button class="w-full py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-custom">
+                查看完整报告
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="font-semibold text-lg text-dark">历史报告</h3>
+            <div class="flex items-center">
+              <div class="relative mr-4">
+                <input type="text" placeholder="搜索报告..." class="pl-8 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              </div>
+              <select class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <option>全部类型</option>
+                <option>周报告</option>
+                <option>月报告</option>
+                <option>年报告</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">报告名称</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">生成时间</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">总节省时间</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">报告类型</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-file-text-o text-primary"></i>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-dark">第23周时间资产报告</div>
+                        <div class="text-xs text-gray-500">2025年6月3日 - 2025年6月9日</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-09</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-dark">12.5 小时</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">周报告</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="text-primary hover:text-primary/80 mr-3">
+                      <i class="fa fa-eye"></i> 查看
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 mr-3">
+                      <i class="fa fa-download"></i> 下载
+                    </button>
+                    <button class="text-accent hover:text-accent/80">
+                      <i class="fa fa-share-alt"></i> 分享
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-file-text-o text-primary"></i>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-dark">5月时间资产报告</div>
+                        <div class="text-xs text-gray-500">2025年5月1日 - 2025年5月31日</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-05-31</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-dark">35.8 小时</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">月报告</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="text-primary hover:text-primary/80 mr-3">
+                      <i class="fa fa-eye"></i> 查看
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 mr-3">
+                      <i class="fa fa-download"></i> 下载
+                    </button>
+                    <button class="text-accent hover:text-accent/80">
+                      <i class="fa fa-share-alt"></i> 分享
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center mr-3">
+                        <i class="fa fa-file-text-o text-primary"></i>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-dark">第22周时间资产报告</div>
+                        <div class="text-xs text-gray-500">2025年5月27日 - 2025年6月2日</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-02</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-dark">10.2 小时</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">周报告</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="text-primary hover:text-primary/80 mr-3">
+                      <i class="fa fa-eye"></i> 查看
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 mr-3">
+                      <i class="fa fa-download"></i> 下载
+                    </button>
+                    <button class="text-accent hover:text-accent/80">
+                      <i class="fa fa-share-alt"></i> 分享
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="flex items-center justify-between px-4 py-3 sm:px-6 mt-4">
+            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <p class="text-sm text-gray-700">
+                  显示第 <span class="font-medium">1</span> 到 <span class="font-medium">3</span> 条，共 <span class="font-medium">12</span> 条结果
+                </p>
+              </div>
+              <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">上一页</span>
+                    <i class="fa fa-chevron-left"></i>
+                  </a>
+                  <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary text-sm font-medium text-white">
+                    1
+                  </a>
+                  <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    2
+                  </a>
+                  <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    3
+                  </a>
+                  <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                    ...
+                  </span>
+                  <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    4
+                  </a>
+                  <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">下一页</span>
+                    <i class="fa fa-chevron-right"></i>
+                  </a>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 时间银行区域 -->
+    <section id="bank" class="py-16 bg-light">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark">时间银行</h2>
+          <p class="mt-4 text-gray-600 max-w-2xl mx-auto">将节省的时间存入时间银行，兑换有意义的生活体验</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold text-lg text-dark">我的时间资产</h3>
+              <div class="relative">
+                <button class="text-sm text-primary font-medium flex items-center">
+                  查看明细 <i class="fa fa-angle-right ml-1"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-gray-600">总储蓄时间</span>
+                <span class="text-sm font-medium text-dark">48.3 小时</span>
+              </div>
+              <div class="w-full bg-gray-200 rounded-full h-2.5">
+                <div class="bg-primary h-2.5 rounded-full" style="width: 75%"></div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-gray-500">本周新增</p>
+                <p class="text-xl font-bold text-dark">+12.5 小时</p>
+              </div>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-sm text-gray-500">已兑换时间</p>
+                <p class="text-xl font-bold text-dark">15.2 小时</p>
+              </div>
+            </div>
+            
+            <div class="bg-gradient-custom p-5 rounded-lg text-white">
+              <h4 class="font-medium mb-2">时间资产等级</h4>
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm opacity-90">当前等级：黄金会员</p>
+                  <p class="text-xs opacity-80 mt-1">再积累 11.7 小时升级为铂金会员</p>
+                </div>
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                  <i class="fa fa-star text-white text-xl"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center justify-between mb-6">
+              <h3 class="font-semibold text-lg text-dark">时间兑换</h3>
+              <div class="relative">
+                <select class="px-3 py-1 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                  <option>全部类别</option>
+                  <option>休闲娱乐</option>
+                  <option>学习成长</option>
+                  <option>健康生活</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="space-y-4">
+              <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-custom">
+                <div class="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                  <i class="fa fa-film text-primary text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-medium text-dark">2小时电影体验</h4>
+                  <p class="text-xs text-gray-500 mt-1">享受2小时的电影时光，包括爆米花和饮料</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-dark">2小时</p>
+                  <button class="mt-1 px-3 py-1 text-xs bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">
+                    立即兑换
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-custom">
+                <div class="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                  <i class="fa fa-tree text-primary text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-medium text-dark">迪士尼烟花秀</h4>
+                  <p class="text-xs text-gray-500 mt-1">一次迪士尼乐园烟花秀的观赏体验</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-dark">5小时</p>
+                  <button class="mt-1 px-3 py-1 text-xs bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">
+                    立即兑换
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-custom">
+                <div class="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                  <i class="fa fa-book text-primary text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-medium text-dark">专业课程学习</h4>
+                  <p class="text-xs text-gray-500 mt-1">一门专业课程的学习权限（7天）</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-dark">3小时</p>
+                  <button class="mt-1 px-3 py-1 text-xs bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom">
+                    立即兑换
+                  </button>
+                </div>
+              </div>
+              
+              <div class="flex items-center p-3 border border-gray-100 rounded-lg hover:border-primary/30 hover:bg-primary/5 transition-custom">
+                <div class="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center mr-4">
+                  <i class="fa fa-cutlery text-primary text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                  <h4 class="font-medium text-dark">双人精致晚餐</h4>
+                  <p class="text-xs text-gray-500 mt-1">一次双人精致晚餐体验</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-sm font-medium text-dark">4小时</p>
+                  <button class="mt-1 px-3 py-1 text-xs bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed">
+                    积分不足
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <button class="w-full mt-6 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-custom">
+              查看更多兑换项目
+            </button>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="font-semibold text-lg text-dark">时间兑换记录</h3>
+            <div class="flex items-center">
+              <div class="relative mr-4">
+                <input type="text" placeholder="搜索记录..." class="pl-8 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+              </div>
+              <select class="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <option>最近3个月</option>
+                <option>最近6个月</option>
+                <option>全部记录</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">兑换项目</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">兑换时间</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">消耗时间</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-film text-green-600"></i>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-dark">2小时电影体验</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-05</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-dark">2小时</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">已完成</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="text-primary hover:text-primary/80">
+                      <i class="fa fa-receipt"></i> 详情
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-md bg-blue-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-book text-blue-600"></i>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-dark">专业课程学习</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-05-28</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-dark">3小时</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">进行中</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="text-primary hover:text-primary/80">
+                      <i class="fa fa-receipt"></i> 详情
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="w-8 h-8 rounded-md bg-green-100 flex items-center justify-center mr-3">
+                        <i class="fa fa-tree text-green-600"></i>
+                      </div>
+                      <div>
+                        <div class="text-sm font-medium text-dark">迪士尼烟花秀</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-05-15</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-dark">5小时</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">已完成</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button class="text-primary hover:text-primary/80">
+                      <i class="fa fa-receipt"></i> 详情
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 分享区域 -->
+    <section id="share" class="py-16 bg-gradient-custom">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-white">分享你的时间成就</h2>
+          <p class="mt-4 text-white/90 max-w-2xl mx-auto">将你的时间资产报告分享给朋友，一起管理时间，成就更好的自己</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex justify-center mb-6">
+              <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <i class="fa fa-line-chart text-primary text-2xl"></i>
+              </div>
+            </div>
+            <h3 class="text-center font-semibold text-lg text-dark mb-4">时间成就分享</h3>
+            <p class="text-center text-gray-600 mb-6">分享你的时间管理成就，激励更多人高效利用时间</p>
+            <div class="flex justify-center space-x-4">
+              <button class="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:bg-[#1877F2]/90 transition-custom">
+                <i class="fa fa-facebook"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white hover:bg-[#1DA1F2]/90 transition-custom">
+                <i class="fa fa-twitter"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:bg-[#25D366]/90 transition-custom">
+                <i class="fa fa-whatsapp"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#0A66C2] flex items-center justify-center text-white hover:bg-[#0A66C2]/90 transition-custom">
+                <i class="fa fa-linkedin"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex justify-center mb-6">
+              <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <i class="fa fa-file-text-o text-primary text-2xl"></i>
+              </div>
+            </div>
+            <h3 class="text-center font-semibold text-lg text-dark mb-4">时间报告分享</h3>
+            <p class="text-center text-gray-600 mb-6">将详细的时间资产报告分享给朋友，展示你的时间管理能力</p>
+            <div class="flex justify-center space-x-4">
+              <button class="w-10 h-10 rounded-full bg-[#EA4335] flex items-center justify-center text-white hover:bg-[#EA4335]/90 transition-custom">
+                <i class="fa fa-google"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#BB001B] flex items-center justify-center text-white hover:bg-[#BB001B]/90 transition-custom">
+                <i class="fa fa-youtube-play"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#E4405F] flex items-center justify-center text-white hover:bg-[#E4405F]/90 transition-custom">
+                <i class="fa fa-instagram"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#FF5700] flex items-center justify-center text-white hover:bg-[#FF5700]/90 transition-custom">
+                <i class="fa fa-reddit"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-6 transform transition-custom hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex justify-center mb-6">
+              <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <i class="fa fa-users text-primary text-2xl"></i>
+              </div>
+            </div>
+            <h3 class="text-center font-semibold text-lg text-dark mb-4">邀请好友</h3>
+            <p class="text-center text-gray-600 mb-6">邀请朋友一起使用时间储蓄罐，共同成长，赢取奖励</p>
+            <div class="flex justify-center space-x-4">
+              <button class="w-10 h-10 rounded-full bg-[#0088CC] flex items-center justify-center text-white hover:bg-[#0088CC]/90 transition-custom">
+                <i class="fa fa-telegram"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#3498DB] flex items-center justify-center text-white hover:bg-[#3498DB]/90 transition-custom">
+                <i class="fa fa-envelope"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#4267B2] flex items-center justify-center text-white hover:bg-[#4267B2]/90 transition-custom">
+                <i class="fa fa-messenger"></i>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-[#000000] flex items-center justify-center text-white hover:bg-[#000000]/90 transition-custom">
+                <i class="fa fa-link"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="text-center mb-8">
+            <h3 class="font-semibold text-xl text-dark mb-2">生成分享链接</h3>
+            <p class="text-gray-600">创建可分享的时间报告链接，让朋友也能查看你的时间管理成果</p>
+          </div>
+          
+          <div class="max-w-2xl mx-auto">
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">选择要分享的报告</label>
+              <select class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                <option>第23周时间资产报告 (2025-06-09)</option>
+                <option>5月时间资产报告 (2025-05-31)</option>
+                <option>第22周时间资产报告 (2025-06-02)</option>
+                <option>4月时间资产报告 (2025-04-30)</option>
+              </select>
+            </div>
+            
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">分享设置</label>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="relative">
+                  <select class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    <option>分享权限</option>
+                    <option>公开访问</option>
+                    <option>仅朋友可见</option>
+                    <option>密码保护</option>
+                  </select>
+                </div>
+                <div class="relative">
+                  <select class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    <option>有效期</option>
+                    <option>1天</option>
+                    <option>7天</option>
+                    <option>30天</option>
+                    <option>永久有效</option>
+                  </select>
+                </div>
+                <div class="relative">
+                  <select class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                    <option>报告内容</option>
+                    <option>完整报告</option>
+                    <option>摘要信息</option>
+                    <option>仅成就数据</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">自定义分享消息</label>
+              <textarea class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" rows="3" placeholder="添加个性化的分享消息...">我使用时间储蓄罐管理时间，本周节省了12.5小时，相当于2次迪士尼烟花秀！点击查看我的时间资产报告：</textarea>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg mb-6">
+              <div class="flex-1 min-w-0">
+                <input type="text" readonly value="https://timesavings.example.com/r/abc123" class="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div class="mt-3 sm:mt-0 sm:ml-3">
+                <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-custom">
+                  <i class="fa fa-copy mr-2"></i> 复制链接
+                </button>
+              </div>
+            </div>
+            
+            <div class="text-center">
+              <p class="text-sm text-gray-500 mb-4">或者通过以下方式分享</p>
+              <div class="flex justify-center space-x-4">
+                <button class="w-12 h-12 rounded-full bg-[#1877F2] flex items-center justify-center text-white hover:bg-[#1877F2]/90 transition-custom">
+                  <i class="fa fa-facebook"></i>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-[#1DA1F2] flex items-center justify-center text-white hover:bg-[#1DA1F2]/90 transition-custom">
+                  <i class="fa fa-twitter"></i>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-[#25D366] flex items-center justify-center text-white hover:bg-[#25D366]/90 transition-custom">
+                  <i class="fa fa-whatsapp"></i>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-[#0088CC] flex items-center justify-center text-white hover:bg-[#0088CC]/90 transition-custom">
+                  <i class="fa fa-telegram"></i>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-[#3498DB] flex items-center justify-center text-white hover:bg-[#3498DB]/90 transition-custom">
+                  <i class="fa fa-envelope"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white pt-16 pb-8">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div>
+          <div class="flex items-center mb-6">
+            <i class="fa fa-clock-o text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-xl">时间储蓄罐</span>
+          </div>
+          <p class="text-gray-400 mb-6">
+            时间储蓄罐帮助你自动记录和分析日常节省的时间，让你更清晰地了解自己的时间使用情况。
+          </p>
+          <div class="flex space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-custom">
+              <i class="fa fa-facebook"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-custom">
+              <i class="fa fa-twitter"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-custom">
+              <i class="fa fa-instagram"></i>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-custom">
+              <i class="fa fa-linkedin"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-6">产品</h3>
+          <ul class="space-y-4">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">时间仪表盘</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">时间报告</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">时间银行</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">时间兑换</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">团队协作</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-6">资源</h3>
+          <ul class="space-y-4">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">帮助中心</a></li></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">使用教程</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">时间管理指南</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">API文档</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">博客</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-6">公司</h3>
+          <ul class="space-y-4">
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">关于我们</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">联系我们</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">加入我们</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">隐私政策</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white transition-custom">服务条款</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-gray-800 pt-8">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center">
+          <p class="text-gray-400 text-sm">© 2025 时间储蓄罐. 保留所有权利.</p>
+          <div class="mt-4 md:mt-0">
+            <div class="flex space-x-6">
+              <a href="#" class="text-gray-400 hover:text-white text-sm transition-custom">隐私政策</a>
+              <a href="#" class="text-gray-400 hover:text-white text-sm transition-custom">服务条款</a>
+              <a href="#" class="text-gray-400 hover:text-white text-sm transition-custom">Cookie设置</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 脚本 -->
+  <script>
+    // 导航栏滚动效果
+    window.addEventListener('scroll', function() {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('shadow-md');
+        navbar.classList.remove('bg-white/90');
+        navbar.classList.add('bg-white');
+      } else {
+        navbar.classList.remove('shadow-md');
+        navbar.classList.add('bg-white/90');
+        navbar.classList.remove('bg-white');
+      }
+    });
+    
+    // 移动端菜单切换
+    document.getElementById('menuBtn').addEventListener('click', function() {
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 初始化图表
+    document.addEventListener('DOMContentLoaded', function() {
+      // 英雄区域图表
+      const timeCtx = document.getElementById('timeChart').getContext('2d');
+      new Chart(timeCtx, {
+        type: 'line',
+        data: {
+          labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          datasets: [{
+            label: '节省时间 (小时)',
+            data: [1.2, 1.8, 2.1, 1.5, 0.8, 2.3, 2.8],
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      // 仪表盘图表
+      const weeklyTimeCtx = document.getElementById('weeklyTimeChart').getContext('2d');
+      new Chart(weeklyTimeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['已节省', '剩余'],
+          datasets: [{
+            data: [12.5, 24.5],
+            backgroundColor: ['#3B82F6', 'rgba(0, 0, 0, 0.05)'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      const aiTimeCtx = document.getElementById('aiTimeChart').getContext('2d');
+      new Chart(aiTimeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['AI优化', '其他'],
+          datasets: [{
+            data: [8.2, 4.3],
+            backgroundColor: ['#10B981', 'rgba(0, 0, 0, 0.05)'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      const templateTimeCtx = document.getElementById('templateTimeChart').getContext('2d');
+      new Chart(templateTimeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['模板复用', '其他'],
+          datasets: [{
+            data: [4.3, 8.2],
+            backgroundColor: ['#8B5CF6', 'rgba(0, 0, 0, 0.05)'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      const trendCtx = document.getElementById('trendChart').getContext('2d');
+      new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: ['第17周', '第18周', '第19周', '第20周', '第21周', '第22周', '第23周'],
+          datasets: [{
+            label: 'AI优化',
+            data: [5.2, 4.8, 6.1, 7.3, 7.9, 9.1, 8.2],
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true
+          }, {
+            label: '模板复用',
+            data: [3.1, 2.9, 3.5, 3.8, 4.2, 3.9, 4.3],
+            borderColor: '#8B5CF6',
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                usePointStyle: true,
+                boxWidth: 6
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.05)'
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+      
+      const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+      new Chart(distributionCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['工作', '学习', '娱乐', '其他'],
+          datasets: [{
+            data: [45, 25, 20, 10],
+            backgroundColor: ['#3B82F6', '#10B981', '#8B5CF6', '#9CA3AF'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+    
